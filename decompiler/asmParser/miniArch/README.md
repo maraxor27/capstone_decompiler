@@ -1,0 +1,1 @@
+The miniArch is an intermediate language use to convert assembly to C

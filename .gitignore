@@ -1,0 +1,4 @@
+asm/*
+c_test/
+hc12sim/
+__pycache__/
