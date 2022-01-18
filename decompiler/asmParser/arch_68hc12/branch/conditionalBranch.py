@@ -48,3 +48,6 @@ class ConditionalBranch(GenericBranch):
 			return f"{var_name} < 0"
 		else:
 			return None
+
+	def __str__(self):
+		return f"Conditional Branch: [operation: {self.operation}, ]"

@@ -10,5 +10,8 @@ class Add(MiniArchInstruction):
 	def get_dependency(self):
 		return self.dep
 
+	def updates_ccr(self):
+		return True
+
 	def __str__(self):
 		return f"{self.dst} = {self.arg1} + {self.arg2};"

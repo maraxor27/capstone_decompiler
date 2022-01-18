@@ -1,7 +1,7 @@
 import re
 
 from . import load
-from .. import BaseInstruction, ArgFactory
+from .. import BaseInstruction, ArgFactory, MiniMove
 from ..arguments import *
 
 
@@ -24,6 +24,9 @@ class Move(BaseInstruction):
 		arg1 = match.group(self._regex_main_group_indexes[1])
 		arg2 = match.group(self._regex_main_group_indexes[2])
 		return (opcode, ArgFactory.make_argument(arg1), ArgFactory.make_argument(arg2))
+
+	def to_mini_arch(self):
+		return [MiniMove(self.arg2.get_value(), self.arg1.get_value())]
 
 	def __str__(self):
 		return f"Move instruction: [opcode: {self.opcode}, arg1: {self.arg1}, arg2: {self.arg2}]"

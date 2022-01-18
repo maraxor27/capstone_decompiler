@@ -104,6 +104,8 @@ class Node():
 	# All the node name are supposed to be different. 
 	# If not, there is a bug somewhere else or the provided code as an error
 	def __eq__(self, other):
+		if other is None:
+			return False
 		return self.get_name() == other.get_name()
 
 class CodeGraph():
@@ -259,4 +261,5 @@ class CodeGraph():
 		 
 		nx.draw(G, with_labels=True, node_size=1500, alpha=0.5, arrows=True)
 		plt.title("Directed")
+		plt.get_current_fig_manager().set_window_title(self.functionName)
 		plt.show()

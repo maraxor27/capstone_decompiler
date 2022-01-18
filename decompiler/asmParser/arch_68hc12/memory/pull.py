@@ -12,3 +12,12 @@ class Pull(BaseInstruction):
 		super().__init__(line)
 		self.opcode = line
 		return
+
+	def get_args(self):
+		return None
+
+	def get_args_object(self):
+		return None
+
+	def __str__(self):
+		return f"Pull instruction: [opcode: {self.opcode}]"

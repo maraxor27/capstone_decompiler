@@ -106,9 +106,9 @@ class ArgDirect(GenericArgument): #Direct, extended and relative Addressing
 			elif m := regex_arg_type_binary.match(string): # binary
 				return ('0b', int(m.group(0)[1:], 2), '')
 			elif m := regex_arg_type_pointer.match(string):
-				return ('global var', '', '')
+				return ('global var ', string, '')
 			elif m := regex_arg_pre_proc_value.match(string):
-				return ('global const var', '', '')
+				return ('global const var ', string, '')
 			elif m := regex_arg_type_ascii.match(string): # char array
 				value = 0
 				for char in range(1,len(m.group(0)[1:-1])):
@@ -126,6 +126,8 @@ class ArgDirect(GenericArgument): #Direct, extended and relative Addressing
 			value = str(hex(value))[2:]
 		elif self.prefix == "0b":
 			value = str(bin(value))[2:]
+		if "global" in self.prefix:
+			return f"{self.prefix}{value}{self.suffix}"
 		return f"*{self.prefix}{value}{self.suffix}"
 
 	def __str__(self):
@@ -138,20 +140,24 @@ class ArgIndexed(GenericArgument): #indexed Addressing
 	arg_regex = re.compile(r"^\s*([^,]+)\s*,\s*([^,]+)\s*", re.I)
 	def __init__(self, string):
 		super().__init__(string)
-		# (self.value, self.prefix) = self.parse(str(string))
+		(self.offset, self.index) = self.parse(str(string))
 
 	def parse(self, string):
 		if len(string) == 0:
 			raise Exception("Can't create a ArgIndexed with empty string")
 
 		match = self.arg_regex.match(string)
-		arg1 = match.group(1)
-		arg2 = match.group(2)
-		print("arg1:", arg1)
-		print("arg2:", arg2)
+		offset = match.group(1)
+		index = match.group(2)
+		return (offset, index)
 
 	def get_value(self):
-		return f"some ArgIndexed"
+		offset = self.offset.lower()
+		if self.index.lower() == "sp" and "*" in self.offset:
+			arg = self.offset.replace("*", "")
+			return f"{arg}"
+
+		return f"*(arg_{offset} + {self.index})"
 
 	def __str__(self):
 		return f"ArgIndexed: [string: {self.string}]"
@@ -170,7 +176,7 @@ class ArgIndexedIndirect(GenericArgument): #indexed-indirect Addressing
 			raise Exception("Can't create a ArgIndexedIndirect with empty string")
 
 	def get_value(self):
-		return f"some ArgIndexedIndirect"
+		return f"*(<offset>, <index_reg>)"
 
 	def __str__(self):
 		return f"ArgIndexedIndirect: [string: {self.string}]"

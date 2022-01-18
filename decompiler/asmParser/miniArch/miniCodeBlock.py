@@ -83,4 +83,6 @@ class MiniCodeBlock:
 		return f"MiniCodeBlock:{{id: {self.id}}}"
 
 	def __eq__(self, other):
+		if other is None:
+			return False
 		return self.id == other.id

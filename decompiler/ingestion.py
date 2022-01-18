@@ -1,5 +1,6 @@
 import re
 import time
+import threading
 
 from .asmParser import * # arch, pre_proc, CodeGraph, includes
 from .asmParser import normalization_pass, stack_parser, \
@@ -162,13 +163,28 @@ def decompile(folder, filename, debug=False):
 
 	finish_code_graph_gen = time.time()
 	print(f"{(finish_code_graph_gen - finish_instruction_pass) * 1000} ms taken to create all code graphs")
-
+	
 	for code_graph in cgs:
-		if True and code_graph.functionName == "readKey":
+		if True:# and code_graph.functionName == "readKey":
 			# code_graph.print_asm_function()
 			mini_arch_func = MiniFunction(code_graph)
+
+			show_thread = True
+			t = threading.Thread(target=CodeGraph.show, args=(code_graph,), kwargs={"id":True,"debug":False,})
+			if show_thread:
+				t.start()
+				time.sleep(1)
+				
 			analyse_code_path(mini_arch_func.code_blocks, debug=debug)
-			if True:
+			if False:
 				code_graph.show(id=True, debug=debug)
-			else:
+			elif False:
 				input()
+
+			if show_thread:
+				t.join()
+			
+
+	end = time.time()
+	print(f"{(end - decompilation_start) * 1000} ms for decompilation")
+	

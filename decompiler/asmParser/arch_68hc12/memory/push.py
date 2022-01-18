@@ -21,14 +21,5 @@ class Push(BaseInstruction):
 	def get_args_object(self):
 		return None
 
-	def _parse_line(self, line):
-		match = self._regex.match(line)
-		if match is  None:
-			raise Exception("No match found in '"+line+"'")
-		opcode = match.group(self._regex_main_group_indexes[0])
-		arg1 = match.group(self._regex_main_group_indexes[1])
-		arg2 = match.group(self._regex_main_group_indexes[2])
-		return (opcode, arg1, arg2)
-
 	def __str__(self):
 		return f"Push instruction: [opcode: {self.opcode}]"

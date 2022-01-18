@@ -12,4 +12,4 @@ class Div(MiniArchInstruction):
 		return self.dep
 
 	def __str__(self):
-		return f"({self.quotient}, {self.remainder}) = {self.arg1} / {self.arg2};"
+		return f"{self.quotient} = {self.arg1} / {self.arg2}; {self.remainder} = {self.arg1} % {self.arg2};"

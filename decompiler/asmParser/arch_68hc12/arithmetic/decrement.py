@@ -1,6 +1,6 @@
 import re
 
-from .. import BaseInstruction, load
+from .. import BaseInstruction, load, MiniSub, MiniCmp
 
 @load
 class Decrement(BaseInstruction):
@@ -9,4 +9,11 @@ class Decrement(BaseInstruction):
 
 	def __init__(self, line):
 		super().__init__(line)
+		self.opcode = line
 		return
+
+	def to_mini_arch(self):
+		reg = str(self.opcode[-1]).lower()
+		if reg == "s":
+			reg = "sp"
+		return [MiniSub("reg_"+reg, "reg_"+reg, "1"), MiniCmp("reg_"+reg, 0)]

@@ -35,10 +35,24 @@ def loop_paths(node, paths, exit, debug=False):
 			inner_path = path[path.index(node):]
 			if inner_path not in inner_paths:
 				inner_paths.append(inner_path)
+				continue
 		if exit in path and node in path and path.index(node) < path.index(exit):
 			inner_path = path[path.index(node):path.index(exit)+1]
 			if inner_path not in inner_paths:
 				inner_paths.append(inner_path)
+				continue
+		if exit not in path and node in path:
+			start = path.index(node)
+			contained_node = []
+			for n in path[start+1:]:
+				if n in contained_node:
+					inner_paths.append(path[start:])
+					break
+				else:
+					contained_node.append(n)
+			continue
+			
+
 
 	if debug:
 		print(f"loop {node.get_id()} paths:")

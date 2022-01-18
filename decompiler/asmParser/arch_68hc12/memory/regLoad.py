@@ -1,6 +1,6 @@
 import re
 
-from .. import BaseInstruction, load, ArgFactory
+from .. import BaseInstruction, load, ArgFactory, MiniMove, MiniComment
 from ..arguments import *
 
 
@@ -25,6 +25,15 @@ class RegLoad(BaseInstruction):
 		opcode = match.group(self._regex_main_group_indexes[0])
 		arg1 = match.group(self._regex_main_group_indexes[1])
 		return (opcode, ArgFactory.make_argument(arg1))
+
+	def to_mini_arch(self):
+		reg = str(self.opcode[-1]).lower()
+		if reg == "s":
+			reg = "sp"
+		if self.opcode.lower() == "leas":
+			# return [MiniComment("stack operation!!!")]
+			return [self]
+		return [MiniMove("reg_"+reg, self.arg1.get_value())]
 
 	def __str__(self):
 		return f"RegLoad: [opcode: {self.opcode}, arg1: {self.arg1}, line: '{self.line}']"

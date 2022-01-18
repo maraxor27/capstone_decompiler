@@ -4,9 +4,6 @@ from ..miniArch import MiniCodeBlock
 class SingleExitLoop:
 	def __init__(self, paths, content, exit):
 		self.content = content
-		print("created loop with following paths")
-		for path in paths:
-			print(path)
 		self.paths = paths
 		self.exit = exit
 		self.order = []
@@ -40,9 +37,13 @@ class SingleExitLoop:
 		self.loop_back_node.append(node)
 
 	def contains(self, node):
-		print("self.content:", self.content)
-		print("node:", node)
-		return node in self.content
+		for thing in self.content:
+			if issubclass(type(thing), Node) or issubclass(type(thing), MiniCodeBlock):
+				if thing.id == node.id:
+					return True
+			else: # can be either a Loop or a Condition
+				if thing.contains(node):
+					return True
 
 	# TODO: redo once the class is fully done
 	def __str__(self):
@@ -82,6 +83,10 @@ class SingleExitLoop:
 					ret += str(c) + '\n'
 			ret = ret + "} while (True);"
 		return ret
+
+	def __repr__(self):
+		return f"SingleExitLoop: [last nodes: {self.get_last_nodes()}, exit: {self.exit}]"
+
 
 
 		
