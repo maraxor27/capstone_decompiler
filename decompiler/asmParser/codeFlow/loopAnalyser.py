@@ -52,8 +52,6 @@ def loop_paths(node, paths, exit, debug=False):
 					contained_node.append(n)
 			continue
 			
-
-
 	if debug:
 		print(f"loop {node.get_id()} paths:")
 		for path in inner_paths:

@@ -45,19 +45,53 @@ def condition_paths(node, paths, contexts=[], debug=False):
 		for path in cond_paths:
 			print(path)
 
-	for path_node in cond_paths[0]:
+	# NEW
+	not_exit_index = None
+	if loop is not None:
+		for index in range(len(cond_paths)):
+			if loop.exit in cond_paths[index]:
+				continue
+			else:
+				not_exit_index = index
+				break
+		if not_exit_index is None:
+			raise Exception("In loop, but all path lead outside of the loop")
+	else:
+		not_exit_index = 0
+
+
+	for path_node in cond_paths[not_exit_index]:
 		in_every_path = True
 		for path in cond_paths:
 			last_node = path[-1]
 			path_contains_loop = len(path) - 1 == path.index(last_node)
+			if loop is not None and loop.exit == path[-1]:
+				continue
 			if loop is None or loop.get_entry_node() != path[-1] or not path_contains_loop:
 				if path_node not in path:
 					in_every_path = False
 					break
+			
+
 
 		if in_every_path:
 			exit = path_node
 			break
+
+	# OLD
+	# for path_node in cond_paths[0]:
+	# 	in_every_path = True
+	# 	for path in cond_paths:
+	# 		last_node = path[-1]
+	# 		path_contains_loop = len(path) - 1 == path.index(last_node)
+	# 		if loop is None or loop.get_entry_node() != path[-1] or not path_contains_loop:
+	# 			if path_node not in path:
+	# 				in_every_path = False
+	# 				break
+
+	# 	if in_every_path:
+	# 		exit = path_node
+	# 		break
 
 	if exit is None:
 		raise Exception("Couldn't exit node for this condition")

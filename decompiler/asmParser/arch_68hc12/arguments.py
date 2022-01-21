@@ -68,9 +68,9 @@ class ArgImmediate(GenericArgument): #Immediate Addressing
 			return ('', pre_proc.get_matching_object(string[1:]), '')
 		elif m := regex_arg_type_ascii.match(string[1:]): # char array
 			value = 0
-			for char in range(1,len(m.group(0)[1:-1])):
+			for char in m.group(0)[1:-1]:
 				value = value * 256 + ord(char)
-			return ('\'', value, '\'')
+			return ('\'', m.group(0)[1:-1], '\'')
 		else:
 			return ('', int(string[1:], 10), '')
 
@@ -109,11 +109,11 @@ class ArgDirect(GenericArgument): #Direct, extended and relative Addressing
 				return ('global var ', string, '')
 			elif m := regex_arg_pre_proc_value.match(string):
 				return ('global const var ', string, '')
-			elif m := regex_arg_type_ascii.match(string): # char array
-				value = 0
-				for char in range(1,len(m.group(0)[1:-1])):
-					value = value * 256 + ord(char)
-				return ('\'', value, '\'')
+			# elif m := regex_arg_type_ascii.match(string): # char array
+			# 	value = 0
+			# 	for char in m.group(0)[1:-1]:
+			# 		value = value * 256 + ord(char)
+			# 	return ('\'', m.group(0)[1:-1], '\'')
 			else:
 				return ('', int(string, 10), '')
 		except Exception as e:

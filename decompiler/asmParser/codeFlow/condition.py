@@ -41,12 +41,12 @@ class Condition:
 			ret += str(self.prefix) + '\n'
 
 		cond = self.prefix.get_branch().get_condition(str(branch_cmp)[:-1])
-		ret += "if ( " + ("!" if self.not_cond else "") + f" {cond} ) {{\n"
+		ret += "if (" + (" !" if self.not_cond else "") + f" {cond} ) {{\n"
 		for c in self.if_content:
-			ret += str(c) + '\n'
+			ret += str(c)# + '\n'
 		if len(self.else_content) > 0:
 			ret += "} else {\n"
-			for c in self.if_content:
+			for c in self.else_content:
 				ret += str(c)
 		ret += "}\n"	
 		return ret
@@ -62,7 +62,7 @@ class If(Condition):
 		self.cond.add_to_if(obj)
 
 	def __repr__(self):
-		return f"Condition-if: [prefix: {self.cond.prefix.__repr__()}]"
+		return f"Condition-if: [prefix: {self.cond.prefix.__repr__()}, not_cond: {self.cond.not_cond}]"
 
 class Else(Condition):
 	def __init__(self, condition):

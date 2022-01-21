@@ -19,35 +19,59 @@ class ConditionalBranch(GenericBranch):
 		elif op == "BCS":
 			raise Exception("Branch if carry set not implemented for decompilation")
 		elif op == "BEQ":
-			return f"{var_name} == 0"
+			minus = var_name.index("-")
+			return var_name[:minus] + "==" + var_name[minus+1:]
+			#return f"{var_name} == 0"
 		elif op == "BNE":
-			return f"{var_name} != 0"
+			minus = var_name.index("-")
+			return var_name[:minus] + "!=" + var_name[minus+1:]
+			# return f"{var_name} != 0"
 		elif op == "BMI":
-			return f"{var_name} < 0"
+			minus = var_name.index("-")
+			return var_name[:minus] + "<" + var_name[minus+1:]
+			#return f"{var_name} < 0"
 		elif op == "BPL":
-			return f"{var_name} >= 0"
+			minus = var_name.index("-")
+			return var_name[:minus] + ">=" + var_name[minus+1:]
+			#return f"{var_name} >= 0"
 		elif op == "BVC":
 			raise Exception("Branch if overflow clear not implemented for decompilation")
 		elif op == "BVS":
 			raise Exception("Branch if overflow clear not implemented for decompilation")
 		elif op == "BGT":
-			return f"{var_name} > 0"
+			minus = var_name.index("-")
+			return var_name[:minus] + ">" + var_name[minus+1:]
+			#return f"{var_name} > 0"
 		elif op == "BGE":
-			return f"{var_name} >= 0"
+			minus = var_name.index("-")
+			return var_name[:minus] + ">=" + var_name[minus+1:]
+			#return f"{var_name} >= 0"
 		elif op == "BLT":
-			return f"{var_name} < 0"
+			minus = var_name.index("-")
+			return var_name[:minus] + "<" + var_name[minus+1:]
+			#return f"{var_name} < 0"
 		elif op == "BLE":
-			return f"{var_name} < 0"
+			minus = var_name.index("-")
+			return var_name[:minus] + "<" + var_name[minus+1:]
+			#return f"{var_name} < 0"
 		elif op == "BHI":
-			return f"{var_name} > 0"
+			minus = var_name.index("-")
+			return var_name[:minus] + ">" + var_name[minus+1:]
+			#return f"{var_name} > 0"
 		elif op == "BHS":
-			return f"{var_name} >= 0"
+			minus = var_name.index("-")
+			return var_name[:minus] + ">=" + var_name[minus+1:]
+			#return f"{var_name} >= 0"
 		elif op == "BLS":
-			return f"{var_name} <= 0"
+			minus = var_name.index("-")
+			return var_name[:minus] + "<=" + var_name[minus+1:]
+			#return f"{var_name} <= 0"
 		elif op == "BLO":
-			return f"{var_name} < 0"
+			minus = var_name.index("-")
+			return var_name[:minus] + "<" + var_name[minus+1:]
+			#return f"{var_name} < 0"
 		else:
 			return None
 
 	def __str__(self):
-		return f"Conditional Branch: [operation: {self.operation}, ]"
+		return f"Conditional Branch: [operation: {self.operation}, line: '{self.line}']"

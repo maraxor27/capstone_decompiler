@@ -53,7 +53,7 @@ class SingleExitLoop:
 				if issubclass(type(c), Node):
 					ret += c.to_string(label=True, link=False) + '\n'
 				elif issubclass(type(c), MiniCodeBlock):
-					ret += c.code_to_string(label=True, link=False) + '\n'
+					ret += c.code_to_string(label=False, branch=False, link=False) + '\n'
 				else:
 					ret += str(c) + '\n'
 			ret = ret + "} while (True);"
@@ -85,7 +85,7 @@ class SingleExitLoop:
 		return ret
 
 	def __repr__(self):
-		return f"SingleExitLoop: [last nodes: {self.get_last_nodes()}, exit: {self.exit}]"
+		return f"SingleExitLoop: [last nodes: {self.get_last_nodes()}, exit: {self.exit.__repr__()}]"
 
 
 

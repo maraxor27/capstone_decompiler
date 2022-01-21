@@ -8,6 +8,7 @@ from ..codeGraph import Node
 
 def analyse_code_path(nodes, debug=False):
 	debug=True
+
 	#analyse_code_path_v1(nodes, debug=debug)
 	code_blocks = analyse_code_path_v2(nodes, start=nodes[0], debug=debug)
 
@@ -141,6 +142,7 @@ def analyse_code_path_v2(nodes, start=None, end=None, paths=None, contexts=[], d
 
 	if debug:
 		print("========> context <========")
+		print(f"context depth:{len(contexts)}")
 		print("nodes:", nodes)
 		print("start:", start.__repr__())
 		if end is not None:
@@ -151,10 +153,11 @@ def analyse_code_path_v2(nodes, start=None, end=None, paths=None, contexts=[], d
 		for path in paths:
 			print(path)
 		print("contexts", contexts)
-				
+		#input()		
 	while True:
 		if debug:
 			print(f"---------- node:{node.id} ----------")
+
 		if len(contexts) == 0:
 			node_links = node.get_links()
 			n_links = len(node_links)
@@ -172,7 +175,7 @@ def analyse_code_path_v2(nodes, start=None, end=None, paths=None, contexts=[], d
 
 				if len(l_exits) == 1:
 					l_paths = loop_paths(node, paths, l_exits[0], debug=debug)
-					loop = SingleExitLoop(l_paths, l_content, l_exits)
+					loop = SingleExitLoop(l_paths, l_content, l_exits[0])
 
 					contexts.append(loop)
 					code_blocks.append(loop)
@@ -190,11 +193,15 @@ def analyse_code_path_v2(nodes, start=None, end=None, paths=None, contexts=[], d
 				node = node_links[0]
 
 			elif is_condition(node, paths): # equivalent to n_links == 2
-				if_paths, else_paths, c_exit = condition_paths(node, paths, contexts=contexts, debug=debug)
+				if_paths, else_paths, c_exit = condition_paths(node, paths, contexts=contexts, debug=False)
 				if debug:
 					print("----- analyse_code_path_v2 -----")
-					print("if_paths:", if_paths)
-					print("else_paths:", else_paths)
+					print("if_paths:")
+					for path in if_paths:
+						print(path)
+					print("else_paths:")
+					for path in else_paths:
+						print(path)
 					print("c_exit:", c_exit)
 					
 				if len(if_paths) > 0 and len(else_paths) > 0:
@@ -265,11 +272,18 @@ def analyse_code_path_v2(nodes, start=None, end=None, paths=None, contexts=[], d
 					if context_loop is not None:
 						print("context_loop last nodes:", context_loop.get_last_nodes())
 
+				
 				if node not in nodes or node == end:
 					break
 
+				elif node in nodes and context_loop is not None and issubclass(type(contexts[-1]), Condition) and node == context_loop.exit:
+					contexts[-1].append("\tbreak;\n")
+					if debug:
+						print("Found break in the condition!")
+					break
+
 				elif n_links == 0:
-					raise Exception("End of function node found inside a loop!!!")
+					raise Exception("End of function node found inside a context!!!")
 
 				elif is_loop(node, paths) and \
 						(issubclass(type(contexts[-1]), Condition) or \
@@ -279,7 +293,7 @@ def analyse_code_path_v2(nodes, start=None, end=None, paths=None, contexts=[], d
 
 					if len(l_exits) == 1:
 						l_paths = loop_paths(node, paths, l_exits[0], debug=debug)
-						loop = SingleExitLoop(l_paths, l_content, l_exits)
+						loop = SingleExitLoop(l_paths, l_content, l_exits[0])
 
 						contexts[-1].append(loop)
 						contexts.append(loop)
@@ -295,15 +309,21 @@ def analyse_code_path_v2(nodes, start=None, end=None, paths=None, contexts=[], d
 
 				elif n_links == 1:
 					contexts[-1].append(node)
+					if node in context_loop.get_last_nodes():
+						break
 					node = node_links[0]
 
-				elif is_condition(node, paths) and context_loop is not None and node not in context_loop.get_last_nodes(): # is_condition(node, paths) is equivalent to n_links == 2
-					if_paths, else_paths, c_exit = condition_paths(node, paths, contexts=contexts, debug=debug)
+				elif is_condition(node, paths) and (context_loop is not None and node not in context_loop.get_last_nodes() or context_loop is None): # is_condition(node, paths) is equivalent to n_links == 2
+					if_paths, else_paths, c_exit = condition_paths(node, paths, contexts=contexts, debug=True)
 					if debug:
 						print("----- analyse_code_path_v2 -----")
-						print("if_paths:", if_paths)
-						print("else_paths:", else_paths)
-						print("c_exit:", c_exit)
+						print("if_paths:")
+						for path in if_paths:
+							print(path)
+						print("else_paths:")
+						for path in else_paths:
+							print(path)
+						print("c_exit:", c_exit.__repr__())
 
 					if (len(if_paths) > 1 or len(if_paths) == 1 and if_paths[0][0] != c_exit) and len(else_paths) > 0:
 						condition = Condition(if_paths + else_paths, node, c_exit)
@@ -324,7 +344,6 @@ def analyse_code_path_v2(nodes, start=None, end=None, paths=None, contexts=[], d
 							print("------ Entering else ------")
 						analyse_code_path_v2(cond_else_content, start=else_paths[0][0], end=c_exit, paths=else_paths, contexts=contexts, debug=debug)
 						contexts.pop(-1)
-
 					elif (len(if_paths) > 1 or len(if_paths) == 1 and if_paths[0][0] != c_exit) and len(else_paths) == 0:
 						condition = Condition(if_paths + else_paths, node, c_exit)
 						contexts[-1].append(condition)
@@ -351,16 +370,23 @@ def analyse_code_path_v2(nodes, start=None, end=None, paths=None, contexts=[], d
 						raise Exception("if_path and else_path are empty. No condition? WTF!!!")
 						
 					node = c_exit
-				elif issubclass(type(contexts[-1]), SingleExitLoop) and node in context_loop.get_last_nodes():
+				#elif issubclass(type(contexts[-1]), SingleExitLoop) and node in context_loop.get_last_nodes():
+				elif node in context_loop.get_last_nodes():
+					print("test_5")
 					context_loop.add_loop_cond_node(node)
-					node = node_links[0]
+					if not issubclass(type(contexts[-1]), SingleExitLoop):
+						contexts[-1].append(node)
+					#node = context_loop.exit
+					break
 				else:
+					print("HOLLY SHIT!!!")
 					contexts[-1].append(node)
 					node = node_links[0]
 			else:
 				raise Exception("Unsupported obj type:", contexts[-1])
 	if debug:
 		print("========> exit context <========")
+		#input()
 	return code_blocks
 
 def crawl_code(c_node, path=[]):

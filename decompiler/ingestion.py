@@ -165,7 +165,7 @@ def decompile(folder, filename, debug=False):
 	print(f"{(finish_code_graph_gen - finish_instruction_pass) * 1000} ms taken to create all code graphs")
 	
 	for code_graph in cgs:
-		if True:# and code_graph.functionName == "readKey":
+		if True and code_graph.functionName == "readKeybrd":
 			# code_graph.print_asm_function()
 			mini_arch_func = MiniFunction(code_graph)
 
@@ -175,6 +175,7 @@ def decompile(folder, filename, debug=False):
 				t.start()
 				time.sleep(1)
 				
+			#code_graph.print_asm_function()
 			analyse_code_path(mini_arch_func.code_blocks, debug=debug)
 			if False:
 				code_graph.show(id=True, debug=debug)
