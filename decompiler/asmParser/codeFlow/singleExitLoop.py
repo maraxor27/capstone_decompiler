@@ -10,10 +10,10 @@ class SingleExitLoop:
 		self.loop_back_node = []
 
 	def append(self, obj):
-		try:
-			print(f"adding {obj.id} to loop {self.content}")
-		except Exception as e:
-			print(f"adding obj to loop {self.content}")
+		# try:
+		# 	print(f"adding {obj.id} to loop {self.content}")
+		# except Exception as e:
+		# 	print(f"adding obj to loop {self.content}")
 		self.order.append(obj)
 
 	def get_entry_node(self):

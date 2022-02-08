@@ -7,9 +7,6 @@ from ..codeGraph import Node
 
 
 def analyse_code_path(nodes, debug=False):
-	debug=True
-
-	#analyse_code_path_v1(nodes, debug=debug)
 	code_blocks = analyse_code_path_v2(nodes, start=nodes[0], debug=debug)
 
 	print("--- Function code ---")
@@ -24,6 +21,7 @@ def analyse_code_path(nodes, debug=False):
 				print(type(block))
 	print("}")
 
+# analyse_code_path_v1 is deprecated. It will be removed in the future.
 def analyse_code_path_v1(nodes, debug=False):
 	path_list = crawl_code(nodes[0])
 	if debug or True:
@@ -372,7 +370,8 @@ def analyse_code_path_v2(nodes, start=None, end=None, paths=None, contexts=[], d
 					node = c_exit
 				#elif issubclass(type(contexts[-1]), SingleExitLoop) and node in context_loop.get_last_nodes():
 				elif node in context_loop.get_last_nodes():
-					print("test_5")
+					if debug:
+						print("test_5")
 					context_loop.add_loop_cond_node(node)
 					if not issubclass(type(contexts[-1]), SingleExitLoop):
 						contexts[-1].append(node)

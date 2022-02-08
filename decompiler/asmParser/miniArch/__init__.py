@@ -21,3 +21,5 @@ from .move import Move as MiniMove
 from .tempValue import TempValue as MiniValue
 
 from .comment import Comment as MiniComment
+
+from .function import Function as MiniFunc
