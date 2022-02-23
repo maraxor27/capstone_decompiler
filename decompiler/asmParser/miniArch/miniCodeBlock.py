@@ -55,7 +55,9 @@ class MiniCodeBlock:
 		return compare
 
 	def contains_return(self):
-		return issubclass(type(self.mini_code[-1]), GenericReturn)
+		if len(self.mini_code) > 0:
+			return issubclass(type(self.mini_code[-1]), GenericReturn)
+		return False
 
 	def code_to_string(self, label=True, branch=True, link=False, exclude=[]):
 		ret = ""

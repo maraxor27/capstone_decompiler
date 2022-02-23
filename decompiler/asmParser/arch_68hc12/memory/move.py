@@ -9,7 +9,7 @@ from ..arguments import *
 class Move(BaseInstruction):
 	name = "MOV<B,W>"
 	regex = re.compile("MOV(B|W)", re.I)
-	_regex = re.compile(f"^(MOV(B|W))\\s+({arg_immediate}|{arg_direct})\\s*,\\s*({arg_direct}|{arg_indexed}|{arg_indexed_indirect})\\s*$", re.I)
+	_regex = re.compile(f"^(MOV(B|W))\\s+({arg_immediate}|{arg_direct}|{arg_indexed})\\s*,\\s*({arg_direct}|{arg_indexed}|{arg_indexed_indirect})\\s*$", re.I)
 	num_arg = 2
 	def __init__(self, line):
 		super().__init__(line)

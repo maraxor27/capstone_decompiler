@@ -12,6 +12,7 @@ class RegLoad(BaseInstruction):
 {arg_immediate}|{arg_indexed}|{arg_direct}|\
 {arg_indexed_indirect})\\s*", re.I)
 	num_arg = 1
+	
 	def __init__(self, line):
 		line = line.strip()
 		super().__init__(line)

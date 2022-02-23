@@ -44,6 +44,8 @@ def condition_paths(node, paths, contexts=[], debug=False):
 		print(f"Unique path for condition after node:{node.id}")
 		for path in cond_paths:
 			print(path)
+		if loop is not None:
+			print(f"loop exit node: {loop.exit.id}")
 
 	# NEW
 	not_exit_index = None
@@ -64,15 +66,13 @@ def condition_paths(node, paths, contexts=[], debug=False):
 		in_every_path = True
 		for path in cond_paths:
 			last_node = path[-1]
-			path_contains_loop = len(path) - 1 == path.index(last_node)
+			path_contains_loop = len(path) - 1 != path.index(last_node)
 			if loop is not None and loop.exit == path[-1]:
 				continue
 			if loop is None or loop.get_entry_node() != path[-1] or not path_contains_loop:
 				if path_node not in path:
 					in_every_path = False
 					break
-			
-
 
 		if in_every_path:
 			exit = path_node

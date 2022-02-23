@@ -3,110 +3,14 @@ import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 
-from . import Label
-from . import Instruction
-from . import GenericReturn
-from . import GenericBranch
-from .parser import StackPreProcessorOffset
+from .node import Node
+from .buffer import Buffer
 
-class Buffer():
-	generic_label_name_counter = 0
-	def __init__(self, label=None):
-		if issubclass(type(label), Label):
-			self.label = label.getLabel()
-		elif type(label) == type(""):
-			self.label = label
-		elif label is None:
-			self.label = "UNKNOWN_LABEL_" + str(Buffer.generic_label_name_counter)
-			Buffer.generic_label_name_counter += 1
-		else:
-			raise Exception("Wrong arg type for Buffer! Support Label, str and None")
-			
-		self.instructions = []
-
-	def append(self, instruction):
-		self.instructions.append(instruction)
-		return
-
-	def get_end(self):
-		return self.instructions[-1]
-
-	def get_label_name(self):
-		return self.label
-
-
-
-class Node():
-	def __init__(self, buffer):
-		self.buffer = buffer
-		self.links = []
-		self.reverse_links = []
-		self.id = None
-
-	def get_name(self):
-		return self.buffer.get_label_name()
-
-	def set_id(self, name):
-		self.id = name
-
-	def get_id(self):
-		return self.id
-
-	def add_link(self, link):
-		self.links.append(link)
-
-	def add_reverse_link(self, link):
-		self.reverse_links.append(link)
-
-	def get_links(self):
-		return self.links
-
-	def get_reverse_link(self):
-		return self.reverse_links
-
-	def link_string_links(self, nodes):
-		for i in range(len(self.links)):
-			if type(self.links[i]) == type(""):
-				for node in nodes: 
-					if node.get_name() == self.links[i]:
-						self.links[i] = node
-						break
-				if type(self.links[i]) == type(""):
-					raise Exception("Couldn't find label:", self.links[i], "in the nodes")
-		return 
-
-	def __str__(self):
-		return self.to_string()
-
-	def to_string(self, label=True, link=True):
-		ret = ""
-
-		if label:
-			ret = f'Label: {self.get_name()}, id: {self.get_id()}\n'
-			
-		ret += f"--- {len(self.buffer.instructions)} instructions in this block ---\n"
-		for inst in self.buffer.instructions:
-			ret += f'\t{str(inst)}\n' 
-
-		if link:
-			ret += "Links: ["
-			for l in self.get_links():
-				ret += str(l.get_id()) + ","
-			ret += "]\n"
-		return ret
-
-	def contains_return(self):
-		return issubclass(type(self.buffer.get_end()), GenericReturn)
-
-	def __repr__(self):
-		return f'Node: [{self.get_name()}, id: {self.get_id()}]'
-
-	# All the node name are supposed to be different. 
-	# If not, there is a bug somewhere else or the provided code as an error
-	def __eq__(self, other):
-		if other is None:
-			return False
-		return self.get_name() == other.get_name()
+from .. import Label
+from .. import Instruction
+from .. import GenericReturn
+from .. import GenericBranch
+from ..parser import StackPreProcessorOffset
 
 class CodeGraph():
 	def __init__(self):
@@ -199,7 +103,7 @@ class CodeGraph():
 							break
 			except Exception as e:
 				print("Error with instruction:", instruction)
-				print("10 next instruction:")
+				print("10 next instructions:")
 				for i in range(1, 10):
 					print(str(self.instruction_buffer[i]))
 				raise e

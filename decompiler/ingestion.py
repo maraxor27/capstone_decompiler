@@ -141,6 +141,7 @@ def decompile(folder, filename, debug=False):
 	print(f"{(finish_global_var_pass - finish_pre_processor_pass) * 1000} ms taken to analyse all global variable")
 	
 	# This pass parses all the instruction in the lines
+	# 
 	instruction_parser(lines)
 	finish_instruction_pass = time.time()
 	print(f"{(finish_instruction_pass - finish_global_var_pass) * 1000} ms taken to analyse all instructions")
@@ -165,7 +166,7 @@ def decompile(folder, filename, debug=False):
 	print(f"{(finish_code_graph_gen - finish_instruction_pass) * 1000} ms taken to create all code graphs")
 	
 	for code_graph in cgs:
-		if True and code_graph.functionName == "readKey":
+		if True and code_graph.functionName == "pollReadKey":
 			# code_graph.print_asm_function()
 			mini_arch_func = MiniFunction(code_graph)
 
