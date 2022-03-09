@@ -31,4 +31,7 @@ It is your job to figure this out with the stack and other information.
 	print("\n---OUTPUT---\n")
 
 	print(code)
+
 	print("\n---END OUTPUT---\n")
+
+	return code

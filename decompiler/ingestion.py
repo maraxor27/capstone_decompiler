@@ -180,7 +180,7 @@ def decompileLines(lines, debug=False):
 	end = time.time()
 	print(f"{(end - finish_reading_files) * 1000} ms for decompilation")
 
-	compose(functions, pre_proc_repo)
+	return compose(functions, pre_proc_repo)
 
 def decompileFiles(folder, filename, debug=False):
 	decompilation_start = time.time()
