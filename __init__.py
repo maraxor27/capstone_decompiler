@@ -1,1 +1,1 @@
-from .decompile import decompileLines
+from .decompiler import decompileLines
