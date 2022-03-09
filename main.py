@@ -1,9 +1,12 @@
-from decompiler import decompile
+from decompiler import decompileFiles
 
 def main():
 	folder = 'asm'
-	file_name = 'keyPad.asm'
-	decompile(folder, file_name, debug=False)
+	file_name = 'test.asm'
+	# try:
+	decompileFiles(folder, file_name, debug=False)
+	# except Exception as e:
+	# 	print(str(e))
 	return
 
 if (__name__, '__main__'):

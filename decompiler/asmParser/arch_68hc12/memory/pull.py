@@ -8,7 +8,7 @@ class Pull(BaseInstruction):
 	name = "PUL<A,B,C,D,X,Y>"
 	regex = re.compile("^PUL[ABCDXY]$", re.I)
 
-	def __init__(self, line):
+	def __init__(self, line, repo):
 		super().__init__(line)
 		self.opcode = line
 		return
@@ -20,4 +20,4 @@ class Pull(BaseInstruction):
 		return None
 
 	def __str__(self):
-		return f"Pull instruction: [opcode: {self.opcode}]"
+		return f"// Instruction to restore the value of register {self.opcode[-1]} using the stack. Pull instruction: [opcode: {self.opcode}] "

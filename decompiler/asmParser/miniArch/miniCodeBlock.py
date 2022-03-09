@@ -1,7 +1,7 @@
 from ..genericBranch import GenericBranch
 from ..genericReturn import GenericReturn
 from .miniArchInstruction import MiniArchInstruction
-
+from .compare import Compare
 
 class MiniCodeBlock:
 	def __init__(self, node):
@@ -88,3 +88,11 @@ class MiniCodeBlock:
 		if other is None:
 			return False
 		return self.id == other.id
+
+	def compose(self, align=1, exclude=[]):
+		ret = ""
+		for mini_instruction in self.mini_code:
+			if not issubclass(type(mini_instruction), GenericBranch):
+				if mini_instruction not in exclude and not issubclass(type(mini_instruction), Compare):
+					ret += '\t' * align + f'{str(mini_instruction)}\n' 
+		return ret[:-1]

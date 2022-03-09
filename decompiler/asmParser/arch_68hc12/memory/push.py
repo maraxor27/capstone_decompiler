@@ -10,7 +10,7 @@ class Push(BaseInstruction):
 	_regex = re.compile(f"^(PSH[ABCDXY])$")
 	num_arg = 0
 
-	def __init__(self, line):
+	def __init__(self, line, repo):
 		super().__init__(line)
 		self.opcode = line
 		return
@@ -22,4 +22,4 @@ class Push(BaseInstruction):
 		return None
 
 	def __str__(self):
-		return f"Push instruction: [opcode: {self.opcode}]"
+		return f"// Instruction saves register {self.opcode[-1]} on the stack. Push instruction: [opcode: {self.opcode}]"

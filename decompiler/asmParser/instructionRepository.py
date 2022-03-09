@@ -24,7 +24,7 @@ class InstructionRepository():
 			self.instructions.append(instruction)
 		return
 
-	def matchInstruction(self, line):
+	def matchInstruction(self, line, repo):
 
 		comment = line.find(';')
 		if comment != -1:
@@ -47,7 +47,7 @@ class InstructionRepository():
 		# instruction 
 		for instruction in self.instructions:
 			if instruction.getRegex().match(inst):
-				return [instruction(line)]
+				return [instruction(line, repo)]
 
 		# label followed by instruction
 		for chars in [' ', ':', ': ']:
@@ -61,7 +61,7 @@ class InstructionRepository():
 					inst = line[colon+len_chars:]
 				for instruction in self.instructions:
 					if instruction.getRegex().match(inst):
-						return [self.label(line[:colon]), instruction(line[colon+len_chars:])]
+						return [self.label(line[:colon]), instruction(line[colon+len_chars:], repo)]
 
 		# label on its own
 		if match := self.label.getRegex().match(line):

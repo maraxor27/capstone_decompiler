@@ -87,6 +87,34 @@ class SingleExitLoop:
 	def __repr__(self):
 		return f"SingleExitLoop: [last nodes: {self.get_last_nodes()}, exit: {self.exit.__repr__()}]"
 
-
-
+	def compose(self, align=1):
+		ret = '\n' + '\t' * align + "do {\n"
+		if len(self.loop_back_node) == 0:
+			for c in self.order:
+				ret += c.compose(align=align+1) + "\n"
+			ret = ret + "} while (True);"
+		elif len(self.loop_back_node) == 1:
+			loop_condition = "<condition>"
+			for c in self.order:
+				if issubclass(type(c), MiniCodeBlock):
+					if c in self.loop_back_node:
+						branch_cmp = c.get_branch_compare()
+						ret += c.compose(align=align+1, exclude=[branch_cmp]) + '\n'
+						loop_condition = c.get_branch().get_condition(str(branch_cmp)[:-1])
+					else:
+						ret += c.compose(align=align+1) + '\n'
+				else:
+					ret += str(c) + '\n'
+			ret = ret + '\t' * align + f"}} while ( {loop_condition} );\n"
+		elif len(self.loop_back_node) > 1:
+			for c in self.order:
+				if issubclass(type(c), Node):
+					ret += c.to_string(label=True, link=False) + '\n'
+					if c in self.loop_back_node:
+						loop_condition = c.get_branch().get_condition("test_var")
+						ret += f"if ( {loop_condition} ) continue; \n"
+				else:
+					ret += str(c) + '\n'
+			ret = ret + "} while (True);\n"
+		return ret
 		

@@ -2,6 +2,7 @@ from .miniCodeBlock import MiniCodeBlock
 
 class MiniFunction:
 	def __init__(self, code_graph):
+		self.code_graph = code_graph
 		self.code_blocks = self.generate_mini_code_blocks(code_graph.nodes)
 		self.link_blocks()
 

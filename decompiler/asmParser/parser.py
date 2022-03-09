@@ -19,15 +19,18 @@ class StackPreProcessorOffset(PreProcessorValue):
 	def get_size(self):
 		unit_size = 0
 		if self.store_type == 'B':
-			unit_size += 1
+			unit_size = 1
 		if self.store_type == 'W':
-			unit_size += 2
+			unit_size = 2
 		if self.store_type == 'L':
-			unit_size += 4
-		return unit_size * self.quantity
+			unit_size = 4
+		return unit_size * int(self.quantity)
 
 	def __str__(self):
 		return f"StackPreProcessorOffset: [string: {self.string}, type: DS.{self.store_type}, quantity: {self.quantity}, value: {self.value}]"
+
+	def compose(self):
+		return f"stack allocation: {self.string} of {self.get_size()} Byte at offset {self.value}."
 
 class PreProcessorInstruction:
 	def __init__(self, string):
@@ -39,7 +42,7 @@ class PreProcessorInstruction:
 	def __str__(self):
 		return f"PreProcessorInstruction: [string: '{self.string}']"
 
-def stack_parser(lines, index=0):
+def stack_parser(lines, index=0, repo=pre_proc):
 	is_stack = False
 	offset = None
 	while index < len(lines):
@@ -53,7 +56,7 @@ def stack_parser(lines, index=0):
 			else: # if in stack
 				if (match := regex_data_store.match(line)) is not None:
 					stackPreProcessorOffset = StackPreProcessorOffset(match.group(1), offset, match.group(2)[-1], match.group(3))
-					pre_proc.add_new_value(stackPreProcessorOffset)
+					repo.add_new_value(stackPreProcessorOffset)
 					lines[index] = stackPreProcessorOffset
 
 					if match.group(2)[-1] == 'B' or match.group(2)[-1] == 'b':
@@ -68,7 +71,7 @@ def stack_parser(lines, index=0):
 					# The current code works for the moment being, but may need to be improve for edge cases not found yet
 					if match2 := regex_data_store.match(lines[index + 1]):
 						stackPreProcessorOffset = StackPreProcessorOffset(match.group(1), offset, match2.group(2)[-1], match2.group(3))
-						pre_proc.add_new_value(stackPreProcessorOffset)
+						repo.add_new_value(stackPreProcessorOffset)
 						lines[index] = stackPreProcessorOffset
 					elif match2 := regex_label_data_store.match(lines[index + 1]) is not None:
 						raise Exception("Two label in a row. Not supported!")
@@ -97,37 +100,54 @@ class GlobalVar(PreProcessorValue):
 	def __str__(self):
 		return f"GlobalVar: [string: {self.string}, type: DC.{self.store_type}, point_to: '{self.data}', constant: {self.const}]"
 
+	def compose(self):
+		if self.const:
+			if self.store_type == "B":
+				return f"const char[] {self.string} = {self.data};"
+			elif self.store_type == "W":
+				return f"const short int[] {self.string} = {self.data}; // 2 Bytes per index"
+			elif self.store_type == "L":
+				return f"const int[] {self.string} = {self.data}; // 4 Bytes per index"
+		else:
+			if self.store_type == "B":
+				return f"char[{self.data}] {self.string};"
+			elif self.store_type == "W":
+				return f"short int[{self.data}] {self.string}; // 2 Bytes per index"
+			elif self.store_type == "L":
+				return f"int[{self.data}] {self.string}; // 4 Bytes per index"
+			
 
-def global_var_parser(lines, index=0):
+
+def global_var_parser(lines, index=0, repo=pre_proc):
 	while index < len(lines):
 		line = lines[index]
 
 		if type(line) == type(""):
 			if (match := regex_global_data.match(line)) is not None:
-				global_data = GlobalVar(match.group(1), match.group(2)[-1], match.group(3), match.group(2)[2].upper() == "C")
-				pre_proc.add_new_value(global_data)
+				global_data = GlobalVar(match.group(1), match.group(2)[-1], match.group(3), match.group(2)[1].upper() == "C")
+				repo.add_new_value(global_data)
 				lines[index] = global_data
 
 		index += 1
 	return
 
-def pre_processor_value_parser(lines, index=0):
+def pre_processor_value_parser(lines, index=0, repo=pre_proc):
 	while index < len(lines):
 		line = lines[index]
 
-		if type(line) == type("") and pre_proc.match_and_add(line):
-				lines[index] = pre_proc.get_last_value_added()
+		if type(line) == type("") and repo.match_and_add(line):
+				lines[index] = repo.get_last_value_added()
 
 		index += 1
 
 	return
 
-def instruction_parser(lines, index=0):
+def instruction_parser(lines, index=0, architecture=arch, repo=pre_proc):
 	while index < len(lines):
 		line = lines[index]
 
 		if type(line) == type(""):
-			instructions = arch.matchInstruction(line)
+			instructions = architecture.matchInstruction(line, repo)
 			n_instruction = len(instructions)
 			if n_instruction == 0:
 				pass
@@ -149,5 +169,9 @@ def normalize_line(line):
 
 def normalization_pass(lines, index=0):
 	while index < len(lines):
-		lines[index] = normalize_line(lines[index])
+		line = normalize_line(lines[index])
+		if len(line) > 0:
+			lines[index] = line
+		else:
+			lines.pop(index)
 		index += 1

@@ -132,6 +132,12 @@ class CodeGraph():
 		for inst in self.instruction_buffer:
 			print('\t' + str(inst))
 
+	def get_stack(self):
+		ret = ""
+		for var in self.stack:
+			ret += f"{var.compose()}\n"
+		return ret
+
 	def print_asm_function(self):
 		if len(self.stack) > 0: 
 			print("Stack Layout")

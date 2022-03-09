@@ -6,7 +6,7 @@ from .miniArchInstruction import MiniArchInstruction
 from .add import Add as MiniAdd
 from .sub import Sub as MiniSub
 from .mult import Mult as MiniMult
-from .div import Div as MiniDiv
+from .div import Div as MiniDiv, Mod as MiniMod
 
 from .compare import Compare as MiniCmp
 
@@ -23,3 +23,4 @@ from .tempValue import TempValue as MiniValue
 from .comment import Comment as MiniComment
 
 from .function import Function as MiniFunc
+from .miniReturn import MiniReturn as MiniRet

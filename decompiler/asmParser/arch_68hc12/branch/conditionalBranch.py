@@ -8,7 +8,7 @@ class ConditionalBranch(GenericBranch):
 	regex = re.compile("^L{0,1}B(CC|CS|EQ|NE|MI|PL|VC|VS|GT|GE|LT|LE|HI|HS|LS|LO)$", re.I)
 	n_path = 2
 
-	def __init__(self, line):
+	def __init__(self, line, repo):
 		super().__init__(line)
 		return
 

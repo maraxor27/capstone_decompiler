@@ -30,7 +30,6 @@ from .logic import *
 from .memory import *
 from .method import *
 from .registerTransfer import *
-from .stack import *
 from .subroutine import *
 from .softwareInterrupt import SoftwareInterrupt
 

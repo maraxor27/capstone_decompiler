@@ -67,20 +67,20 @@ class Instruction(metaclass=MetaInstruction):
 			elif (char == ")"):
 				depth -= 1
 
-	def parse_line(self, line):
+	def parse_line(self, line, repo=pre_proc):
 		try:
 			return self._parse_line(line)
 		except:
-			new_line = pre_proc.try_replace_pre_proc_inline(line)
+			new_line = repo.try_replace_pre_proc_inline(line)
 			if new_line == line:
-				print(pre_proc)
+				print(repo)
 				print("old line:", line)
 				print("new line:", new_line)
 				raise Exception("Couldn't find pre-processor value in line:", line) 
 			try:
 				return self._parse_line(new_line)
 			except Exception as e:
-				# print(pre_proc)
+				# print(repo)
 				print(e)
 				print("Pattern:", self._regex.pattern)
 				print("old line:", line)

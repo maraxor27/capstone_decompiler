@@ -11,9 +11,9 @@ class Move(BaseInstruction):
 	regex = re.compile("MOV(B|W)", re.I)
 	_regex = re.compile(f"^(MOV(B|W))\\s+({arg_immediate}|{arg_direct}|{arg_indexed})\\s*,\\s*({arg_direct}|{arg_indexed}|{arg_indexed_indirect})\\s*$", re.I)
 	num_arg = 2
-	def __init__(self, line):
+	def __init__(self, line, repo):
 		super().__init__(line)
-		(self.opcode, self.arg1, self.arg2) = self.parse_line(line)
+		(self.opcode, self.arg1, self.arg2) = self.parse_line(line, repo)
 		return
 
 	def _parse_line(self, line):

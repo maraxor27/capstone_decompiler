@@ -22,3 +22,5 @@ arch.setLabel(Label)
 
 from .codeGraph import CodeGraph
 from .codeFlow import analyse_code_path
+
+from .composer import compose

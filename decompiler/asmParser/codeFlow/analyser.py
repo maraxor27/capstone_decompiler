@@ -9,17 +9,19 @@ from ..codeGraph import Node
 def analyse_code_path(nodes, debug=False):
 	code_blocks = analyse_code_path_v2(nodes, start=nodes[0], debug=debug)
 
-	print("--- Function code ---")
-	print(f"void {nodes[0].label}() {{")
-	for block in code_blocks:
-		if issubclass(type(block), Node):
-			print(block.to_string(label=False, link=False))
-		else:
-			try:
-				print(block)
-			except:
-				print(type(block))
-	print("}")
+	if debug:
+		print("--- Function code ---")
+		print(f"void {nodes[0].label}() {{")
+		for block in code_blocks:
+			if issubclass(type(block), Node):
+				print(block.to_string(label=False, link=False))
+			else:
+				try:
+					print(block)
+				except:
+					print(type(block))
+		print("}")
+	return code_blocks
 
 # analyse_code_path_v1 is deprecated. It will be removed in the future.
 def analyse_code_path_v1(nodes, debug=False):

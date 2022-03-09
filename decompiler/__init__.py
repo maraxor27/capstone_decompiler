@@ -1,1 +1,1 @@
-from .ingestion import decompile
+from .ingestion import decompile, decompileLines, decompileFiles

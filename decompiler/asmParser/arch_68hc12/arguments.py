@@ -156,8 +156,9 @@ class ArgIndexed(GenericArgument): #indexed Addressing
 		if self.index.lower() == "sp" and "*" in self.offset:
 			arg = self.offset.replace("*", "")
 			return f"{arg}"
-
-		return f"*(arg_{offset} + {self.index})"
+		if offset == "0":
+			return f"*(reg_{self.index})"
+		return f"*(reg_{self.index} + {offset})"
 
 	def __str__(self):
 		return f"ArgIndexed: [string: {self.string}]"

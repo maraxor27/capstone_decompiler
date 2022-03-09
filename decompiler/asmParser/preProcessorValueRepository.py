@@ -18,6 +18,16 @@ class PreProcessorValue:
 	def __str__(self):
 		return f"PreProcessorValue: [string: '{self.string}', value: {self.value}]"
 
+	def compose(self):
+		c_value = self.value
+		if c_value[0] == "%":
+			c_value = '0b'+c_value[1:]
+		elif c_value[0] == "@":
+			c_value = hex(int(c_value[1:], 8)) + f" // This value was converted from octal to hexadecimal. Original value: {self.value}"
+		elif c_value[0] == '$':
+			c_value = hex(int(c_value[1:], 16))
+		return f"#define {self.string} {c_value}"
+
 # TODO: add check to through exception when trying to define name used by the compiler
 class PreProcessorValueRepository:
 	regex = re.compile(r"^\s*([A-Z][A-Z0-9_]*)[\s:]+EQU\s+(\S+)", re.I)
@@ -69,6 +79,9 @@ class PreProcessorValueRepository:
 			if normalized_string == pre_value.get_value().upper():
 				return pre_value
 		return None
+
+	def getAll(self):
+		return self.values
 
 	def __str__(self):
 		ret = "Pre-processor value defined: ["
