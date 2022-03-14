@@ -9,9 +9,9 @@ class Jump(BaseInstruction):
 	_regex = re.compile(f"^(JSR)\\s+([a-z0-9_]+)\\s*$", re.I)
 	num_arg = 1
 
-	def __init__(self, line):
+	def __init__(self, line, repo):
 		super().__init__(line)
-		(self.opcode, self.func_name) = self.parse_line(line)
+		(self.opcode, self.func_name) = self.parse_line(line, repo)
 		return 
 
 	def _parse_line(self, line):

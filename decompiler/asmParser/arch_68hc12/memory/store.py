@@ -13,9 +13,9 @@ class Store(BaseInstruction):
 {arg_indexed_indirect})\\s*", re.I)
 	num_arg = 1
 
-	def __init__(self, line):
+	def __init__(self, line, repo):
 		super().__init__(line)
-		(self.opcode, self.arg1) = self.parse_line(line)
+		(self.opcode, self.arg1) = self.parse_line(line, repo)
 		return
 
 	def _parse_line(self, line):

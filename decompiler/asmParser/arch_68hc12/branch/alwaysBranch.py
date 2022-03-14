@@ -8,7 +8,7 @@ class AlwaysBranch(GenericBranch):
 	regex = re.compile("^L{0,1}BRA$", re.I)
 	n_path = 1
 
-	def __init__(self, line):
+	def __init__(self, line, repo):
 		super().__init__(line)
 		return
 

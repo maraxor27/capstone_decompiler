@@ -6,7 +6,7 @@ from .. import GenericBranch, load
 class BranchBit(GenericBranch):
 	name = "BR<SET, CLR>"
 
-	def __init__(self, line):
+	def __init__(self, line, repo):
 		super().__init__(line)
 
 	def get_condition(self, var_name):

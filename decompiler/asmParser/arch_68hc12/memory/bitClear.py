@@ -9,9 +9,9 @@ class BitClear(BaseInstruction):
 	name = "BCLR"
 	_regex = re.compile(f"^(BCLR)\\s+({arg_direct}|{arg_indexed}),\\s*({arg_mask8})\\s*$", re.I)
 	num_arg = 2
-	def __init__(self, line):
+	def __init__(self, line, repo):
 		super().__init__(line)
-		(self.opcode, self.arg1, self.arg2) = self.parse_line(line)
+		(self.opcode, self.arg1, self.arg2) = self.parse_line(line, repo)
 		return
 
 	def get_args(self):
