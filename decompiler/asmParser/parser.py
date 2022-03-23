@@ -16,6 +16,12 @@ class StackPreProcessorOffset(PreProcessorValue):
 	def get_offset(self):
 		return self.value
 
+	def get_value(self):
+		return f"*{self.string}"
+
+	def get_c_value(self):
+		return f"*{self.string}"
+
 	def get_size(self):
 		unit_size = 0
 		if self.store_type == 'B':
@@ -95,6 +101,9 @@ class GlobalVar(PreProcessorValue):
 		
 
 	def get_value(self):
+		return f"&{self.string}"
+
+	def get_c_value(self):
 		return f"&{self.string}"
 
 	def __str__(self):

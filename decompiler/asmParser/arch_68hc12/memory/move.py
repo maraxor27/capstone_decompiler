@@ -16,14 +16,14 @@ class Move(BaseInstruction):
 		(self.opcode, self.arg1, self.arg2) = self.parse_line(line, repo)
 		return
 
-	def _parse_line(self, line):
+	def _parse_line(self, line, repo):
 		match = self._regex.match(line)
 		if match is  None:
 			raise Exception("No match found in '"+line+"'")
 		opcode = match.group(self._regex_main_group_indexes[0])
 		arg1 = match.group(self._regex_main_group_indexes[1])
 		arg2 = match.group(self._regex_main_group_indexes[2])
-		return (opcode, ArgFactory.make_argument(arg1), ArgFactory.make_argument(arg2))
+		return (opcode, ArgFactory.make_argument(arg1, repo), ArgFactory.make_argument(arg2, repo))
 
 	def to_mini_arch(self):
 		return [MiniMove(self.arg2.get_value(), self.arg1.get_value())]

@@ -156,9 +156,17 @@ def decompileLines(lines, debug=False):
 	while len(program) > 0:
 		cg = CodeGraph()
 		cg.input(program)
-		cg.parse_instruction_buffer()
+		found = cg.parse_instruction_buffer()
+		if found:	
+			cgs.append(cg)
 		program = cg.remove_extra_instructions()
-		cgs.append(cg)
+
+	if debug:
+		if len(cgs) > 0:	
+			for cg in cgs:
+				print(f"Found: {cg.functionName}",flush=True)
+		else:
+			print('No Function found!',flush=True)
 
 	finish_code_graph_gen = time.time()
 	print(f"{(finish_code_graph_gen - finish_instruction_pass) * 1000} ms taken to create all code graphs")
@@ -171,16 +179,17 @@ def decompileLines(lines, debug=False):
 		if show_thread:
 			t.start()
 			time.sleep(1)
-			
+		
+
 		functions.append((mini_arch_func, analyse_code_path(mini_arch_func.code_blocks, debug=debug)))
 
 		if show_thread:
 			t.join()	
 	
 	end = time.time()
-	print(f"{(end - finish_reading_files) * 1000} ms for decompilation")
+	print(f"{(end - finish_reading_files) * 1000} ms for decompilation",flush=True)
 
-	return compose(functions, pre_proc_repo)
+	return compose(functions, pre_proc_repo, debug)
 
 def decompileFiles(folder, filename, debug=False):
 	decompilation_start = time.time()
@@ -253,9 +262,9 @@ def decompile(folder, filename, debug=False):
 	while len(program) > 0:
 		cg = CodeGraph()
 		cg.input(program)
-		cg.parse_instruction_buffer()
+		if cg.parse_instruction_buffer():
+			cgs.append(cg)
 		program = cg.remove_extra_instructions()
-		cgs.append(cg)
 
 	finish_code_graph_gen = time.time()
 	print(f"{(finish_code_graph_gen - finish_instruction_pass) * 1000} ms taken to create all code graphs")
@@ -283,5 +292,5 @@ def decompile(folder, filename, debug=False):
 			
 
 	end = time.time()
-	print(f"{(end - decompilation_start) * 1000} ms for decompilation")
+	print(f"{(end - decompilation_start) * 1000} ms for decompilation",flush=True)
 	

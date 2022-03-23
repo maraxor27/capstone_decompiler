@@ -69,7 +69,7 @@ class Instruction(metaclass=MetaInstruction):
 
 	def parse_line(self, line, repo=pre_proc):
 		try:
-			return self._parse_line(line)
+			return self._parse_line(line, repo)
 		except:
 			new_line = repo.try_replace_pre_proc_inline(line)
 			if new_line == line:
@@ -78,10 +78,8 @@ class Instruction(metaclass=MetaInstruction):
 				print("new line:", new_line)
 				raise Exception("Couldn't find pre-processor value in line:", line) 
 			try:
-				return self._parse_line(new_line)
+				return self._parse_line(new_line, repo)
 			except Exception as e:
-				# print(repo)
-				print(e)
 				print("Pattern:", self._regex.pattern)
 				print("old line:", line)
 				print("new line:", new_line)
@@ -109,6 +107,9 @@ class Instruction(metaclass=MetaInstruction):
 	def getRegex(cls):
 		return cls.regex
 
+	def compose(self, align=0):
+		return '\t'*align + self.__str__()
+
 
 class UnknownInstruction(Instruction):
 	def __init__(self, line):
@@ -116,4 +117,4 @@ class UnknownInstruction(Instruction):
 		return
 
 	def __str__(self):
-		return "Unknown instruction: " + self.line
+		return "Unknown instruction: '" + self.line + "'"

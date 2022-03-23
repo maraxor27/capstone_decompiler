@@ -8,10 +8,13 @@ class ArgumentFactory:
 		if new_type not in self.arg_types:
 			self.arg_types.append(new_type)
 
-	def make_argument(self, string):
+	def make_argument(self, string, repo):
 		for arg_type in self.arg_types:
 			if arg_type.regex.match(string):
-				return arg_type(string)
+				return arg_type(string, repo)
+
+		raise Exception(f"couldn't make argument with {string}")
+		
 		return None
 
 

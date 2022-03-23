@@ -23,13 +23,15 @@ class CodeGraph():
 	def input(self, instructions):
 		self.instruction_buffer += instructions
 
-	def parse_instruction_buffer(self):
-		self.parser_first_pass()
+	def parse_instruction_buffer(self, debug=False):
+		if not self.parser_first_pass(debug):
+			return False
 		self.parser_final_linking()
 		for node in self.nodes:
 			if len(links := node.get_links()) == 2 and links[0] == links[1]:
 				raise Exception("Branch in node is it's usefull at all!!!")
 		self.set_ids()
+		return True
 
 	def parser_first_pass(self, debug=False):
 		links = []
@@ -53,7 +55,7 @@ class CodeGraph():
 
 						self.functionName = instruction.getLabel()
 						if debug:
-							print("Function found:", self.functionName)
+							print("Function found:", self.functionName, flush=True)
 				else:
 					# For each label or branching instruction within the function a new buffer and 
 					# a new node are created to do code separation
@@ -99,15 +101,20 @@ class CodeGraph():
 						buffer.append(instruction)
 						if issubclass(type(instruction), GenericReturn):
 							if len(self.nodes) > 1 and "UNKNOWN_LABEL_" in buffer.label and "end_of_function" not in links:
-								buffer.label = "end_of_function"
+								buffer.label = "end_of_function"												
 							break
+
 			except Exception as e:
 				print("Error with instruction:", instruction)
 				print("10 next instructions:")
 				for i in range(1, 10):
-					print(str(self.instruction_buffer[i]))
+					print(str(self.instruction_buffer[i]),flush=True)
 				raise e
-		return
+
+		if debug:
+			print(f"end of function found {start}",flush=True)
+
+		return start
 
 	def parser_final_linking(self):
 		for node in self.nodes:

@@ -2,6 +2,7 @@ from ..genericBranch import GenericBranch
 from ..genericReturn import GenericReturn
 from .miniArchInstruction import MiniArchInstruction
 from .compare import Compare
+from .miniReturn import MiniReturn
 
 class MiniCodeBlock:
 	def __init__(self, node):
@@ -56,7 +57,7 @@ class MiniCodeBlock:
 
 	def contains_return(self):
 		if len(self.mini_code) > 0:
-			return issubclass(type(self.mini_code[-1]), GenericReturn)
+			return issubclass(type(self.mini_code[-1]), MiniReturn)
 		return False
 
 	def code_to_string(self, label=True, branch=True, link=False, exclude=[]):

@@ -24,3 +24,5 @@ from .comment import Comment as MiniComment
 
 from .function import Function as MiniFunc
 from .miniReturn import MiniReturn as MiniRet
+
+from .miniBreak import MiniBreak

@@ -12,11 +12,11 @@ class Condition:
 		self.not_cond = not_cond
 
 	def add_to_if(self, elem):
-		print(f"==========> added {type(elem)} to if content")
+		#print(f"==========> added {type(elem)} to if content")
 		self.if_content.append(elem)
 
 	def add_to_else(self, elem):
-		print(f"==========> added {type(elem)} to else content")
+		#print(f"==========> added {type(elem)} to else content")
 		self.else_content.append(elem)
 
 	def contains(self, node):
@@ -49,6 +49,27 @@ class Condition:
 			for c in self.else_content:
 				ret += str(c)
 		ret += "}\n"	
+		return ret
+
+	def compose(self, align=1):
+		ret = ""
+		branch_cmp = self.prefix.get_branch_compare()
+		if issubclass(type(self.prefix), Node):
+			ret += self.prefix.to_string(label=True, link=False) + '\n'
+		elif issubclass(type(self.prefix), MiniCodeBlock):
+			ret += self.prefix.compose(align=align) + '\n'
+		else:
+			ret += str(self.prefix) + '\n'
+
+		cond = self.prefix.get_branch().get_condition(str(branch_cmp)[:-1])
+		ret += '\t' * align + "if (" + (" !" if self.not_cond else "") + f" {cond} ) {{\n"
+		for c in self.if_content:
+			ret += c.compose(align+1)# + '\n'
+		if len(self.else_content) > 0:
+			ret += '\t'*align + "} else {\n"
+			for c in self.else_content:
+				ret += c.compose(align+1)
+		ret += '\t'*align + "}\n"	
 		return ret
 
 	def __repr__(self):

@@ -11,7 +11,7 @@ class ArgInherent(GenericArgument): #Inhenrent addressing
 	def __init__(self, string):
 		super().__init__(string)
 
-	def parse(self, string):
+	def parse(self, string, repo=pre_proc):
 		if len(string) == 0:
 			raise Exception("Can't create a ArgInherent with empty string")
 
@@ -48,11 +48,11 @@ arg_indexed_indirect = f"(\\[\\s*((-|){arg_type_int}|{arg_type_hexa}|{arg_type_o
 class ArgImmediate(GenericArgument): #Immediate Addressing
 	regex = re.compile(f"^{arg_immediate}$", re.I)
 
-	def __init__(self, string):
+	def __init__(self, string, repo=pre_proc):
 		super().__init__(string)
-		(self.prefix, self.value, self.suffix) = self.parse(str(string))
+		(self.prefix, self.value, self.suffix) = self.parse(str(string), repo)
 
-	def parse(self, string):
+	def parse(self, string, repo):
 		if len(string) == 0:
 			raise Exception("Can't create a ArgImmediate with empty string")
 
@@ -63,9 +63,9 @@ class ArgImmediate(GenericArgument): #Immediate Addressing
 		elif m := regex_arg_type_binary.match(string[1:]): # binary
 			return ('0b', int(m.group(0)[1:], 2), '')
 		elif m := regex_arg_type_pointer.match(string[1:]):
-			return ('', pre_proc.get_matching_object(string[1:]), '')
+			return ('', repo.get_matching_object(string[1:]).get_c_value(), '')
 		elif m := regex_arg_pre_proc_value.match(string[1:]):
-			return ('', pre_proc.get_matching_object(string[1:]), '')
+			return ('', repo.get_matching_object(string[1:]).get_c_value(), '')
 		elif m := regex_arg_type_ascii.match(string[1:]): # char array
 			value = 0
 			for char in m.group(0)[1:-1]:
@@ -90,11 +90,11 @@ class ArgImmediate(GenericArgument): #Immediate Addressing
 class ArgDirect(GenericArgument): #Direct, extended and relative Addressing
 	regex = re.compile(f"^{arg_direct}$", re.I)
 
-	def __init__(self, string):
+	def __init__(self, string, repo=pre_proc):
 		super().__init__(string)
-		(self.prefix, self.value, self.suffix) = self.parse(str(string))
+		(self.prefix, self.value, self.suffix) = self.parse(str(string), repo)
 
-	def parse(self, string):
+	def parse(self, string, repo):
 		try:
 			if len(string) == 0:
 				raise Exception("Can't create a ArgDirect with empty string")
@@ -127,7 +127,7 @@ class ArgDirect(GenericArgument): #Direct, extended and relative Addressing
 		elif self.prefix == "0b":
 			value = str(bin(value))[2:]
 		if "global" in self.prefix:
-			return f"{self.prefix}{value}{self.suffix}"
+			return f"{value}"
 		return f"*{self.prefix}{value}{self.suffix}"
 
 	def __str__(self):
@@ -138,11 +138,11 @@ class ArgDirect(GenericArgument): #Direct, extended and relative Addressing
 class ArgIndexed(GenericArgument): #indexed Addressing
 	regex = re.compile(f"^{arg_indexed}$", re.I)
 	arg_regex = re.compile(r"^\s*([^,]+)\s*,\s*([^,]+)\s*", re.I)
-	def __init__(self, string):
+	def __init__(self, string, repo=pre_proc):
 		super().__init__(string)
-		(self.offset, self.index) = self.parse(str(string))
+		(self.offset, self.index) = self.parse(str(string), repo)
 
-	def parse(self, string):
+	def parse(self, string, repo):
 		if len(string) == 0:
 			raise Exception("Can't create a ArgIndexed with empty string")
 
@@ -168,11 +168,11 @@ class ArgIndexed(GenericArgument): #indexed Addressing
 class ArgIndexedIndirect(GenericArgument): #indexed-indirect Addressing
 	regex = re.compile(f"^{arg_indexed}$", re.I)
 
-	def __init__(self, string):
+	def __init__(self, string, repo=pre_proc):
 		super().__init__(string)
-		# (self.value, self.prefix) = self.parse(str(string))
+		# (self.value, self.prefix) = self.parse(str(string), repo)
 
-	def parse(self, string):
+	def parse(self, string, repo):
 		if len(string) == 0:
 			raise Exception("Can't create a ArgIndexedIndirect with empty string")
 

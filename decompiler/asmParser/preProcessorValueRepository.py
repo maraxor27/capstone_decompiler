@@ -9,6 +9,9 @@ class PreProcessorValue:
 	def get_value(self):
 		return f"*{self.string}"
 
+	def get_c_value(self):
+		return f"{self.string}"
+
 	def get_string(self):
 		return self.string
 

@@ -19,6 +19,8 @@ def compose(functions, global_vars, debug=False):
 			code += f"{global_var.compose()}\n"
 
 	for func in functions:
+		if debug:
+			print(f"function {func} is being composed",flush=True)
 		code += "\n/*\nStack layout of the function\n"
 		code += f"{func[0].code_graph.get_stack()}"
 		code += """
@@ -26,12 +28,13 @@ This function may or may not have arguments.
 It is your job to figure this out with the stack and other information.
 */
 """
-		code += f"{compose_code_blocks(func[1])}"
+		code += f"{compose_code_blocks(func[1], debug)}"
 
-	print("\n---OUTPUT---\n")
+	if debug:
+		print("\n---OUTPUT---\n")
 
-	print(code)
+		print(code)
 
-	print("\n---END OUTPUT---\n")
+		print("\n---END OUTPUT---\n")
 
 	return code

@@ -3,11 +3,15 @@ from .loopAnalyser import *
 from .condition import Condition, If, Else
 from .conditionAnalyser import *
 
+from ..miniArch import MiniBreak
+
 from ..codeGraph import Node
 
 
 def analyse_code_path(nodes, debug=False):
-	code_blocks = analyse_code_path_v2(nodes, start=nodes[0], debug=debug)
+	code_blocks = []
+	if len(nodes) > 1:
+		code_blocks = analyse_code_path_v2(nodes, start=nodes[0], debug=False)
 
 	if debug:
 		print("--- Function code ---")
@@ -138,7 +142,11 @@ def analyse_code_path_v2(nodes, start=None, end=None, paths=None, contexts=[], d
 		node = start
 
 	if paths is None:
-		paths = crawl_code(node)
+		paths = crawl_code(node, debug=debug)
+		if debug:
+			print("Paths:")
+			for path in paths:
+				print(path)
 
 	if debug:
 		print("========> context <========")
@@ -277,7 +285,7 @@ def analyse_code_path_v2(nodes, start=None, end=None, paths=None, contexts=[], d
 					break
 
 				elif node in nodes and context_loop is not None and issubclass(type(contexts[-1]), Condition) and node == context_loop.exit:
-					contexts[-1].append("\tbreak;\n")
+					contexts[-1].append(MiniBreak())
 					if debug:
 						print("Found break in the condition!")
 					break
@@ -314,7 +322,7 @@ def analyse_code_path_v2(nodes, start=None, end=None, paths=None, contexts=[], d
 					node = node_links[0]
 
 				elif is_condition(node, paths) and (context_loop is not None and node not in context_loop.get_last_nodes() or context_loop is None): # is_condition(node, paths) is equivalent to n_links == 2
-					if_paths, else_paths, c_exit = condition_paths(node, paths, contexts=contexts, debug=True)
+					if_paths, else_paths, c_exit = condition_paths(node, paths, contexts=contexts, debug=debug)
 					if debug:
 						print("----- analyse_code_path_v2 -----")
 						print("if_paths:")
@@ -390,15 +398,23 @@ def analyse_code_path_v2(nodes, start=None, end=None, paths=None, contexts=[], d
 		#input()
 	return code_blocks
 
-def crawl_code(c_node, path=[]):
+def crawl_code(c_node, path=[], debug=False):
 	paths = []
 	path = path + [c_node]
+	if debug:
+		print(f"node {c_node.get_id()} links to {c_node.get_links()}",flush=True)
 	for next_node in c_node.get_links():
 		new_path = path + [next_node]
 		if next_node in path:
+			if debug:
+				print("Reach visited node. Loop!")
 			paths.append(new_path)
 		elif next_node.contains_return():
+			if debug:
+				print("Reach return!")
 			paths.append(new_path)
 		else:
-			paths += crawl_code(next_node, path)
+			if debug:
+				print("Continue!")
+			paths += crawl_code(next_node, path, debug)
 	return paths

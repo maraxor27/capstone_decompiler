@@ -92,7 +92,7 @@ class SingleExitLoop:
 		if len(self.loop_back_node) == 0:
 			for c in self.order:
 				ret += c.compose(align=align+1) + "\n"
-			ret = ret + "} while (True);"
+			ret += '\t'*align+ "} while (True);\n"
 		elif len(self.loop_back_node) == 1:
 			loop_condition = "<condition>"
 			for c in self.order:
@@ -114,7 +114,7 @@ class SingleExitLoop:
 						loop_condition = c.get_branch().get_condition("test_var")
 						ret += f"if ( {loop_condition} ) continue; \n"
 				else:
-					ret += str(c) + '\n'
-			ret = ret + "} while (True);\n"
+					ret += c.compose(align=align+1) + '\n'
+			ret += '\t'*align + "} while (True);\n"
 		return ret
 		
