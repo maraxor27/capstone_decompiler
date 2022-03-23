@@ -13,3 +13,8 @@ if __name__ == '__main__':
 	regload = RegLoad("ldx #array", repo)
 	print("Test6:", regload)
 	print(Compare("cmpb #N", repo))
+	print([str(s) for s in AddReg("ABA", repo).to_mini_arch()])
+	print([str(s) for s in AddMem("ADDD #N", repo).to_mini_arch()])
+
+
+	#print(Store._regex.pattern)

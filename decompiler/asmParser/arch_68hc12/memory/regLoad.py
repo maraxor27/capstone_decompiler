@@ -16,7 +16,6 @@ class RegLoad(BaseInstruction):
 		line = line.strip()
 		super().__init__(line)
 		(self.opcode, self.arg1) = self.parse_line(line, repo)
-		print(type(self.arg1))
 		return
 
 	def _parse_line(self, line, repo):

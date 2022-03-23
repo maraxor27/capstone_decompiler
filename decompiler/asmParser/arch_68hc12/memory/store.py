@@ -19,11 +19,13 @@ class Store(BaseInstruction):
 		return
 
 	def _parse_line(self, line, repo):
+		print(f"line: '{line}'")
 		match = self._regex.match(line)
 		if match is  None:
 			raise Exception("No match found in '"+line+"'")
 		opcode = match.group(self._regex_main_group_indexes[0])
 		arg1 = match.group(self._regex_main_group_indexes[1])
+		print("arg1:", arg1)
 		return (opcode, ArgFactory.make_argument(arg1, repo))
 
 	def to_mini_arch(self):

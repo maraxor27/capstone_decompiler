@@ -1,2 +1,3 @@
 from .decrement import Decrement
-from .increment import Increment
+from .increment import IncrementReg, IncrementMem
+from .addition import AddReg, AddMem

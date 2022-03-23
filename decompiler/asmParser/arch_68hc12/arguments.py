@@ -30,9 +30,9 @@ arg_type_octal = "\\@[0-8]+"
 regex_arg_type_octal = re.compile(arg_type_octal, re.I)
 arg_type_binary = "\\%[01]+"
 regex_arg_type_binary = re.compile(arg_type_binary, re.I)
-arg_type_pointer = f"\\&[A-Z][A-Z0-9_]*(|\\+{arg_type_int}|-{arg_type_int})"
+arg_type_pointer = f"\\&[A-Z][A-Z0-9_]*(\\+{arg_type_int}|-{arg_type_int}|)"
 regex_arg_type_pointer = re.compile(arg_type_pointer, re.I)
-arg_pre_proc_value = f"\\*[A-Z][A-Z0-9_]*(|\\+{arg_type_int}|-{arg_type_int})"
+arg_pre_proc_value = f"\\*[A-Z][A-Z0-9_]*(\\+{arg_type_int}|-{arg_type_int}|)"
 regex_arg_pre_proc_value = re.compile(arg_pre_proc_value, re.I)
 arg_type_ascii = "\\'.+\\'"
 regex_arg_type_ascii = re.compile(arg_type_ascii, re.I)
@@ -108,6 +108,9 @@ class ArgDirect(GenericArgument): #Direct, extended and relative Addressing
 			elif m := regex_arg_type_pointer.match(string):
 				return ('global var ', string, '')
 			elif m := regex_arg_pre_proc_value.match(string):
+				print(string[1:])
+				if '-' in string[1:] or '+' in string[1:]:
+					return ('((char) ', string[1:], ')')
 				return ('global const var ', string, '')
 			# elif m := regex_arg_type_ascii.match(string): # char array
 			# 	value = 0

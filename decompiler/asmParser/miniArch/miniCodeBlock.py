@@ -21,6 +21,8 @@ class MiniCodeBlock:
 					mini_code += instruction.to_mini_arch()
 				except Exception as e:
 					mini_code.append(instruction)
+					print(e)
+					print("Couldn't convert to mini arch:", instruction)
 			else:
 				mini_code.append(instruction)
 
