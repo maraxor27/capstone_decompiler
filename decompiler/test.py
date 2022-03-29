@@ -16,5 +16,11 @@ if __name__ == '__main__':
 	print([str(s) for s in AddReg("ABA", repo).to_mini_arch()])
 	print([str(s) for s in AddMem("ADDD #N", repo).to_mini_arch()])
 
+	print([str(s) for s in SubReg("SBA", repo).to_mini_arch()])
+	print([str(s) for s in SubMem("SUBD #N", repo).to_mini_arch()])
+
+	print([str(s) for s in AndMem("ANDA #N", repo).to_mini_arch()])
+
+	print([str(s) for s in OrMem("ORAA #N", repo).to_mini_arch()])
 
 	#print(Store._regex.pattern)

@@ -1,13 +1,13 @@
 import re
 
-from .. import BaseInstruction, load, MiniAnd, MiniCmp, ArgFactory
+from .. import BaseInstruction, load, MiniOr, MiniCmp, ArgFactory
 from ..arguments import *
 
 @load
-class AndMem(BaseInstruction):
-	name = "AND<A,B>"
-	regex = re.compile("^AND(A|B)$", re.I)
-	_regex = re.compile(f"^(AND(A|B))\\s+(\
+class OrMem(BaseInstruction):
+	name = "ORA<A,B>"
+	regex = re.compile("^ORA(A|B)$", re.I)
+	_regex = re.compile(f"^(ORA(A|B))\\s+(\
 {arg_immediate}|{arg_indexed}|{arg_direct}|{arg_indexed_indirect})\\s*", re.I)
 	num_arg = 1
 
@@ -26,7 +26,7 @@ class AndMem(BaseInstruction):
 
 	def to_mini_arch(self):	
 		reg = str(self.opcode[-1]).lower()
-		return [MiniAnd("reg_"+reg, "reg_"+reg, self.arg1.get_value())]
+		return [MiniOr("reg_"+reg, "reg_"+reg, self.arg1.get_value())]
 
 	def __str__(self):
-		return f"AndMem: [opcode: {self.opcode}, arg1: {self.arg1.get_value()}, line: '{self.line}']"
+		return f"OrMem: [opcode: {self.opcode}, arg1: {self.arg1.get_value()}, line: '{self.line}']"

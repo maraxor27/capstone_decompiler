@@ -1,12 +1,12 @@
 import re
 
-from .. import BaseInstruction, load, MiniAdd, MiniCmp, ArgFactory
+from .. import BaseInstruction, load, MiniSub, MiniCmp, ArgFactory
 from ..arguments import *
 
 @load
-class AddReg(BaseInstruction):
-	name = "AB<A,X,Y>"
-	regex = re.compile("^AB(A|X|Y)$", re.I)
+class SubReg(BaseInstruction):
+	name = "SBA"
+	regex = re.compile("^SBA$", re.I)
 
 	def __init__(self, line, repo):
 		super().__init__(line)
@@ -15,16 +15,16 @@ class AddReg(BaseInstruction):
 
 	def to_mini_arch(self):
 		reg = str(self.opcode[-1]).lower()
-		return [MiniAdd("reg_"+reg, "reg_"+reg, "reg_b"), MiniCmp("reg_b", "0")]
+		return [MiniSub("reg_a", "reg_a", "reg_b"), MiniCmp("reg_a", "0")]
 
 	def __str__(self):
-		return f"AddReg: [opcode: {self.opcode}, line: '{self.line}']"
+		return f"SubReg: [opcode: {self.opcode}, line: '{self.line}']"
 
 @load
-class AddMem(BaseInstruction):
-	name = "ADD<A,B,D>"
-	regex = re.compile("^ADD(A|B|D)$", re.I)
-	_regex = re.compile(f"^(ADD(A|B|D))\\s+(\
+class SubMem(BaseInstruction):
+	name = "SUB<A,B,D>"
+	regex = re.compile("^SUB(A|B|D)$", re.I)
+	_regex = re.compile(f"^(SUB(A|B|D))\\s+(\
 {arg_immediate}|{arg_indexed}|{arg_direct}|{arg_indexed_indirect})\\s*", re.I)
 	num_arg = 1
 
@@ -43,7 +43,7 @@ class AddMem(BaseInstruction):
 
 	def to_mini_arch(self):	
 		reg = str(self.opcode[-1]).lower()
-		return [MiniAdd("reg_"+reg, "reg_"+reg, self.arg1.get_value()), MiniCmp("reg_"+reg, "0")]
+		return [MiniSub("reg_"+reg, "reg_"+reg, self.arg1.get_value()), MiniCmp("reg_"+reg, "0")]
 
 	def __str__(self):
-		return f"AddMem: [opcode: {self.opcode}, arg1: {self.arg1.get_value()}, line: '{self.line}']"
+		return f"SubMem: [opcode: {self.opcode}, arg1: {self.arg1.get_value()}, line: '{self.line}']"
